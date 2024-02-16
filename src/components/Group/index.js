@@ -10,12 +10,8 @@ const checkCondition = (conditions, responses) => {
   for (let i = 0; i < conditions.length; i++) {
     const condition = conditions[i];
     const { jsonKey, op, value } = condition;
-    // Access the value in the data object based on jsonKey
-    // const newjsonKey = "responses." + jsonKey;
-    // console.log(condition);
     const actualValue = _.get(responses, jsonKey);
-    console.log(actualValue);
-    
+
     // Perform comparison based on the operator
     switch (op) {
       case "==":
@@ -34,49 +30,57 @@ const checkCondition = (conditions, responses) => {
 const Index = ({ label, subParameters, handleChange, responses }) => {
   return (
     <div className="group-container">
-      {/* <h2>{label}</h2> */}
+      <h2>{label}</h2>
       {subParameters.map((field, index) => {
         switch (field.uiType) {
           case 'Radio':
-            console.log(field.validate.options);
             return (
               <Radio
                 key={index}
                 label={field.label}
                 options={field.validate.options}
-                handleChange={handleChange} // Pass the field.jsonKey and the selected value to handleChange
+                handleChange={(e) => handleChange(e, field.jsonKey)} // Pass the field.jsonKey and the selected value to handleChange
                 name={field.jsonKey}
                 defaultValue={field.validate.defaultValue}
               />
             );
           case 'Ignore':
             // Check conditions to determine if this section should be displayed
-              if(checkCondition(field.conditions, responses) === true){
-                console.log('true');
-              } else {
-                console.log('false');
-              }
-
-            return null;
+            if (checkCondition(field.conditions, responses)) {
+              return (
+                <Index
+                  key={index}
+                  label={field.label}
+                  subParameters={field.subParameters}
+                  handleChange={handleChange}
+                  responses={responses}
+                />
+              );
+            } else {
+              return null; // If conditions are not met, don't render this component
+            }
           case 'Select':
+            // console.log(field);
             return (
               <Select
                 key={index}
                 label={field.label}
                 options={field.validate.options}
-                handleChange={handleChange}
+                handleChange={(e) => handleChange(e, field.jsonKey)} // Pass the field.jsonKey and the selected value to handleChange
                 name={field.jsonKey}
-                defaultValue={field.validate.defaultValue}
-              />
+                defaultValue={responses[field.jsonKey] || field.validate.defaultValue} // Update defaultValue dynamically
+                />
             );
           case 'Input':
+            // console.log("exe");
+            // console.log(field);
             return (
               <Input
                 key={index}
                 label={field.label}
                 placeholder={field.placeholder}
                 description={field.description}
-                handleChange={handleChange}
+                handleChange={(e) => handleChange(e, field.jsonKey)} // Pass the field.jsonKey and the selected value to handleChange
                 name={field.jsonKey}
               />
             );

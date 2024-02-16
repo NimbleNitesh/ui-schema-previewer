@@ -5,7 +5,7 @@ const index = ({ label, options, description, handleChange, name }) => {
 
   return (
     <div className='radio-constainer'>
-      <label>{label}</label>
+      {/* <label>{label}</label> */}
       {options.map((item, index) => (
         <div key={index}>
           <input
