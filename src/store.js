@@ -1,9 +1,10 @@
-import React from 'react'
+import { configureStore } from "@reduxjs/toolkit";
+import simpleUITypesSlice from "./slices/simpleUITypesSlice";
 
-const store = () => {
-  return (
-    <div>store</div>
-  )
-}
+const store = configureStore({
+    reducer: {
+        simpleUI: simpleUITypesSlice,
+    },
+});
 
-export default store
+export default store;
